@@ -1,33 +1,73 @@
-const cols = 20
-const rows = 20
-//const nodeHeight = height / rows
-//const nodeWidth = width / cols
+const canvas = document.getElementById('grid');
+const ctx = canvas.getContext('2d');
 
 class Node {
     /*  constructs a node at gridspace (row, col)
-        each node calculates the f(n) from f(n) = g(n) + h(n) using A* search algorithm where:
-            f is the estimated total cost of traversal through this node
-            g is the known cost of traversal from the start to this node
-            h is the estimated remaining cost from this node to the end
+        Attributes:
+            row (int) - row coordinate in a (row, col) grid
+            col (int) - column coordinate in a (row, col) grid
+            boxSize (int) - the width (px) of the node
+            gridEdge (int) - the last row coordinate in the grid
+            x (int) - the x-coordinate of the top left corner of the node on the canvas
+            y (int) - the y-coordinate of the top left corner of the node on the canvas
+            color (str) - the fill color of the node when draw (or re-drawn)
+            neighbors (array) - an array of nodes that share edges with this node
     */
-    constructor(row, col){
+    constructor(row, col, boxSize, gridEdge){
         this.row = row;
         this.col = col;
-        this.f 
-        this.g 
-        this.h 
+        this.boxSize = boxSize;
+        this.gridEdge = gridEdge;
+        this.x = col*boxSize;
+        this.y = row*boxSize;
+        this.color = 'white';
+        this.neigbors = [];
     }
+
+    draw(){
+        ctx.beginPath();
+        ctx.fillStyle = this.color
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'black';
+        ctx.rect(this.x, this.y, this.boxSize, this.boxSize);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
+    }
+    
+    findNeighbors(grid){
+        if (grid[this.row+1][this.col].closed == false){
+            this.neigbors.push(grid[this.row+1][this.col]);
+        }
+    }
+
 }
 
-function drawGrid(){ 
-    // creates a 2D array of Node objects
-    let grid = new Array(rows);
-    
-    for (let i = 0; i < rows; i++){
-        grid[i] = new Array(cols)
-        for (let j = 0; j < cols; j++){
+function createNodes(boxes){ 
+    // creates a 2D array (boxes x boxes) of Node objects 
+
+    let grid = new Array(boxes);
+
+    for (let i = 0; i < boxes; i++){
+        grid[i] = new Array(boxes);
+        for (let j = 0; j < boxes; j++){
             grid[i][j] = new Node(i, j);
         }
     }
-    return grid
+    return grid;
+}
+
+function drawGrid(boxes, size){
+    canvas.width = size+'px';
+    canvas.height = size+'px';
+
+    const boxSize = size / boxes;
+    
+
+
+}
+
+function main(){
+    drawGrid(20, 800);
+    createNodes(20);
 }

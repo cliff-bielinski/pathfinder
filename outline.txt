@@ -1,0 +1,40 @@
+Using A* algorithm find the shortest path between two vertices
+
+Summary of A* Algorithm:
+    Modification of Djistkra's Algorithm using a heuristic that creates a best estimate of shortest remaining path 
+    from vertex
+
+    f(n) = g(n) + h(n)
+
+    f(n) the estimated path length between two vertices that traverses through a given vertex
+    g(n) the known path length from the beginning vertex to the current vertex
+    h(n) the estimated remaining length between the current vertex and the end vertex
+
+General Outline:
+    Create a grid of nodes and a list of open nodes and a list of closed nodes (empty)
+    User defines a start node
+    User defines an end node
+    User creates blocked nodes (or none)
+    While the current node is not the end node and there exists open nodes:
+        Pull current node from open node list
+        Examine neighbors of current node:
+            if the path through current node to neighbor node < neighbor's g(n), update g(n) to path
+                if g is greater than current g, skip to next neighbor (no need to calculate h or f)
+            update h score of neighbor node if shorter (Manhattan method vs Euclidean vs ?)
+            calculate f score of neighbor node (g + h)
+            if f shorter than current f score, assign current node as shortest path to neighbor
+            add neighbor to open set
+            repeat with rest of neighbors
+        Add current node to path set
+        Take shortest neighbor in open set and make it current node
+    When current node is the end node - draw shortest path from path set
+    If there are no open nodes without reaching end node, there is no path.
+
+
+Node Class:
+    Position in the grid
+    Draw self and fill in default color
+    Change color (empty, start, end, barrier, current, examined, path)
+    Examine neighbors
+
+    
