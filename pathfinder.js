@@ -36,7 +36,7 @@ function createNode(row, col, boxes){
 }
 
 function createGrid(gridSize){ 
-    // creates a CSS grid of 
+    // creates a CSS grid of gridSize by gridSize and creates nodes for each grid space
     for (let row = 0; row < gridSize; row++){
         for (let col = 0; col < gridSize; col++){
             node = createNode(row, col, gridSize);
