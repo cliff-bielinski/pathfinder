@@ -37,4 +37,5 @@ Node Class:
     Change color (empty, start, end, barrier, current, examined, path)
     Examine neighbors
 
-    
+ Data Structures:
+    Priority Queue - allows for fast 

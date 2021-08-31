@@ -1,5 +1,26 @@
-#grid {
+body {
+    font: 16px Arial, sans-serif;
+}
+
+header {
+    text-align: center;
+}
+
+button {
+    padding: 5px 15px 5px 15px;
+    box-shadow: 2px 2px 5px black;
+    margin: 10px;
+}
+
+.container {
+    display: grid;
     width: 800px;
     height: 800px;
     border: 1px solid black;
+    box-shadow: 2px 2px 5px black;
+    margin: auto;
+}
+
+.node {
+    border: 0.1px solid rgba(0, 0, 0, 0.1);
 }

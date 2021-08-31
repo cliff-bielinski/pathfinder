@@ -1,73 +1,54 @@
-const canvas = document.getElementById('grid');
-const ctx = canvas.getContext('2d');
+const container = document.querySelector('div.container');
 
-class Node {
-    /*  constructs a node at gridspace (row, col)
-        Attributes:
-            row (int) - row coordinate in a (row, col) grid
-            col (int) - column coordinate in a (row, col) grid
-            boxSize (int) - the width (px) of the node
-            gridEdge (int) - the last row coordinate in the grid
-            x (int) - the x-coordinate of the top left corner of the node on the canvas
-            y (int) - the y-coordinate of the top left corner of the node on the canvas
-            color (str) - the fill color of the node when draw (or re-drawn)
-            neighbors (array) - an array of nodes that share edges with this node
+function setNodeState(event){
+    if (!document.querySelector('div[state=start]')){
+        event.target.setAttribute('state', 'start');
+        event.target.style.backgroundColor = 'blue';
+    }
+    else if (!document.querySelector('div[state=end]')){
+        event.target.setAttribute('state', 'end');
+        event.target.style.backgroundColor = 'gold';
+    }
+}
+
+function createNode(row, col, boxes){
+    /* 
+        creates a new DOM element (node) for each grid space on the board with the following attributes:
+        row, col - position on the board
+        grid-limit - to help detect whether the node is adjacent to a board boundary
+        state - whether the node is empty, the starting point, the ending point, or a wall
+        eventlisteners to change the color of the node with user interaction 
     */
-    constructor(row, col, boxSize, gridEdge){
-        this.row = row;
-        this.col = col;
-        this.boxSize = boxSize;
-        this.gridEdge = gridEdge;
-        this.x = col*boxSize;
-        this.y = row*boxSize;
-        this.color = 'white';
-        this.neigbors = [];
-    }
-
-    draw(){
-        ctx.beginPath();
-        ctx.fillStyle = this.color
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = 'black';
-        ctx.rect(this.x, this.y, this.boxSize, this.boxSize);
-        ctx.fill();
-        ctx.stroke();
-        ctx.closePath();
-    }
-    
-    findNeighbors(grid){
-        if (grid[this.row+1][this.col].closed == false){
-            this.neigbors.push(grid[this.row+1][this.col]);
+    let node = document.createElement('div');
+    node.setAttribute('class', 'node');
+    node.setAttribute('row', row);
+    node.setAttribute('col', col);
+    node.setAttribute('grid-limit', boxes);
+    node.setAttribute('state', 'empty');
+    node.addEventListener('mousedown', setNodeState, {once: true});
+    node.addEventListener('mouseover', (e) => {
+        if (e.shiftKey && e.target.getAttribute('state') == 'empty') {
+            e.target.setAttribute('state', 'wall');
+            e.target.style.backgroundColor = 'black';
         }
-    }
-
+    })
+    return node;
 }
 
-function createNodes(boxes){ 
-    // creates a 2D array (boxes x boxes) of Node objects 
-
-    let grid = new Array(boxes);
-
-    for (let i = 0; i < boxes; i++){
-        grid[i] = new Array(boxes);
-        for (let j = 0; j < boxes; j++){
-            grid[i][j] = new Node(i, j);
+function createGrid(gridSize){ 
+    // creates a CSS grid of 
+    for (let row = 0; row < gridSize; row++){
+        for (let col = 0; col < gridSize; col++){
+            node = createNode(row, col, gridSize);
+            container.appendChild(node);
         }
     }
-    return grid;
-}
-
-function drawGrid(boxes, size){
-    canvas.width = size+'px';
-    canvas.height = size+'px';
-
-    const boxSize = size / boxes;
-    
-
-
+    container.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+    container.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
 }
 
 function main(){
-    drawGrid(20, 800);
-    createNodes(20);
+    grid = createGrid(40);
 }
+
+main();
