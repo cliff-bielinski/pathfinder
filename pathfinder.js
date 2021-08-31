@@ -48,15 +48,34 @@ function createGrid(gridSize){
     container.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
 }
 
-function getPosition(node){
+function getCoordinates(node){
     // returns the absolute position of the node in pixels as {x,y} coordinates
     let rect=node.getBoundingClientRect();
     return {x:rect.left, y:rect.top};
 }
 
+function getPosition(node){
+    // returns the row, column of a given node and edge of grid as integers
+    position = {};
+    position.row = Number(node.getAttribute('row'));
+    position.col = Number(node.getAttribute('col'));
+    position.limit = Number(node.getAttribute('grid-limit'));
+    return position;
+}
+
+function getNode(row, col){
+    // returns a node at a given row, column
+    return document.querySelector(`div[row="${row}"][col="${col}"]`);
+}
+
 function findDistance(pos1, pos2){
     // returns the distance between two nodes using Manhattan distance
     return Math.abs(pos1.x-pos2.x) + Math.abs(pos1.y-pos2.y);
+}
+
+function findNeighbors(node){
+    gridLimit = Number(node.getAttribute('grid-limit'));
+    
 }
 
 function clearGrid(){
