@@ -1,6 +1,7 @@
 const container = document.querySelector('div.container');
 
 function setNodeState(event){
+    // checks whether a start and ending node have been created and if not creates one
     if (!document.querySelector('div[state=start]')){
         event.target.setAttribute('state', 'start');
         event.target.style.backgroundColor = 'blue';
