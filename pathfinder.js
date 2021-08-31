@@ -48,8 +48,32 @@ function createGrid(gridSize){
     container.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
 }
 
+function getPosition(node){
+    // returns the absolute position of the node in pixels as {x,y} coordinates
+    let rect=node.getBoundingClientRect();
+    return {x:rect.left, y:rect.top};
+}
+
+function findDistance(pos1, pos2){
+    // returns the distance between two nodes using Manhattan distance
+    return Math.abs(pos1.x-pos2.x) + Math.abs(pos1.y-pos2.y);
+}
+
+function clearGrid(){
+    // removes all child elements from the grid container
+    while (container.firstChild){
+        container.removeChild(container.firstChild);
+    }
+}
+
+function reset(){
+    // clears the grid and generates a new grid
+    clearGrid();
+    createGrid(40);
+}
+
 function main(){
-    grid = createGrid(40);
+    createGrid(40);
 }
 
 main();
