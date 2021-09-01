@@ -83,9 +83,15 @@ function getNode(row, col){
 function getScores(node, end){
     score = {}
     score.g = Number(node.getAttribute('g'));
-    score.h = findDistance(getCoordinates(node), getCoordinates(end));
-    score.f = score.g + score.h;
+    score.h = Number(node.getAttribute('h'));
+    score.f = Number(node.getAttribute('f'));
     return score;
+}
+
+function setScores(g, node, end){
+    node.setAttribute('g', g);
+    node.setAttribute('h', findDistance(getCoordinates(node), getCoordinates(end)));
+    node.setAttribute('f', Number(node.getAttribute('g')) + Number(node.getAttribute('h')));
 }
 
 function openNode(node){
@@ -101,9 +107,16 @@ function closeNode(node){
 }
 
 function createPath(node){
-    // changes the node to closed
+    // changes the node to part of shortest path
     node.setAttribute('state', 'path');
     node.style.backgroundColor = 'purple';
+}
+
+function drawPath(path, current){
+    while(path.has(current)){
+        current = path.current;
+        createPath(current);
+    }
 }
 
 function findDistance(pos1, pos2){
@@ -137,22 +150,58 @@ function findNeighbors(node){
     return neighbors;
 }
 
-function findPath(start, end){
-    steps = 0;
-    openQueue = new PriorityQueue();
-    path = new Set();
-    openSet = new Set();
+async function findPath(start, end){
+    let steps = 0;
+    let openQueue = new PriorityQueue();
+    let path = {};
+    let openSet = new Set();
 
     openQueue.enqueue(start, 0, steps);
     openSet.add(start);
 
-    start.setAttribute('g', 10);
-    getScores(start, end);
+    setScores(0, start, end);
 
+    //while there are remaining possible nodes to explore, continue algorith,
     while (!openQueue.empty()){
-        currentNode = openQueue.dequeue().value;
+        await sleep(100);
+        let currentNode = openQueue.dequeue().value;
         openSet.delete(currentNode);
+
+        //destination reached
+        if (currentNode == end) {
+            drawPath(path, end);
+            return;
+        }
+
+        let currentScores = getScores(currentNode, end);
+
+        let neighbors = findNeighbors(currentNode);
+
+        neighbors.forEach(neighbor => {
+            let tempG = currentScores.g + 1;
+            let neighborScores = getScores(neighbor);
+            if (tempG < neighborScores.g){
+                path.neighbor = currentNode;
+                setScores(tempG, neighbor, end);
+                neighborScores = getScores(neighbor);
+                console.log(openQueue)
+                if (!openSet.has(neighbor)){
+                    steps++;
+                    openQueue.enqueue(neighbor, neighborScores.f, steps);
+                    openSet.add(neighbor);
+                    openNode(neighbor);
+                }
+            }
+        });
+
+        if (currentNode != start){
+            closeNode(currentNode);
+        }
     }
+}
+
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
 function clearGrid(){
