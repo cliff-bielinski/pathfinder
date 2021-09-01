@@ -31,7 +31,7 @@ class PriorityQueue {
     }
 
     dequeue(){
-        //pops value at top of the heap and resorts heap
+        //pops value at top of the heap and re-sorts heap
         
         //edge case to remove element at the top of the heap when it is the only element
         if (this.heap.length < 3){
@@ -39,15 +39,17 @@ class PriorityQueue {
             this.heap[0] = null;
             return value;
         }
-        console.log(this);
         let forRemoval = this.heap[1];
         this.heap[1] = this.heap.pop();
         let currentIndex = 1;
         let [leftChild, rightChild] = [2*currentIndex, 2*currentIndex+1];
         let childIndex = null;
+
+        // if priorities are equal, use tiebreaker to determine index
         if (this.heap[rightChild] && this.heap[rightChild].priority == this.heap[leftChild].priority){
             childIndex = this.heap[rightChild].tiebreaker < this.heap[leftChild].tiebreaker ? rightChild : leftChild;
         }
+
         else{
             childIndex = this.heap[rightChild] && this.heap[rightChild].priority < this.heap[leftChild].priority ? rightChild : leftChild;
         }
@@ -68,5 +70,11 @@ class PriorityQueue {
             }
         }
         return forRemoval;
+    }
+
+    empty(){
+        // if the heap has no nodes return true
+        if (this.heap.length == 1) return true;
+        else return false;
     }
 }

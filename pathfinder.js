@@ -1,15 +1,15 @@
 const container = document.querySelector('div.container');
 
-function setNodeState(event){
-    // checks whether a start and ending node have been created and if not creates one
-    if (!document.querySelector('div[state=start]')){
-        event.target.setAttribute('state', 'start');
-        event.target.style.backgroundColor = 'blue';
+function createGrid(gridSize){ 
+    // creates a CSS grid of gridSize by gridSize and creates nodes for each grid space
+    for (let row = 0; row < gridSize; row++){
+        for (let col = 0; col < gridSize; col++){
+            node = createNode(row, col, gridSize);
+            container.appendChild(node);
+        }
     }
-    else if (!document.querySelector('div[state=end]')){
-        event.target.setAttribute('state', 'end');
-        event.target.style.backgroundColor = 'gold';
-    }
+    container.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+    container.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
 }
 
 function createNode(row, col, boxes){
@@ -26,6 +26,8 @@ function createNode(row, col, boxes){
     node.setAttribute('col', col);
     node.setAttribute('grid-limit', boxes);
     node.setAttribute('state', 'empty');
+    node.setAttribute('f', 'Infinity');
+    node.setAttribute('g', 'Infinity');
     node.addEventListener('mousedown', setNodeState, {once: true});
     node.addEventListener('mouseover', (e) => {
         if (e.shiftKey && e.target.getAttribute('state') == 'empty') {
@@ -36,16 +38,26 @@ function createNode(row, col, boxes){
     return node;
 }
 
-function createGrid(gridSize){ 
-    // creates a CSS grid of gridSize by gridSize and creates nodes for each grid space
-    for (let row = 0; row < gridSize; row++){
-        for (let col = 0; col < gridSize; col++){
-            node = createNode(row, col, gridSize);
-            container.appendChild(node);
-        }
+function setNodeState(event){
+    // checks whether a start and ending node have been created and if not creates one
+    if (!document.querySelector('div[state=start]')){
+        event.target.setAttribute('state', 'start');
+        event.target.style.backgroundColor = 'blue';
     }
-    container.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
-    container.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+    else if (!document.querySelector('div[state=end]')){
+        event.target.setAttribute('state', 'end');
+        event.target.style.backgroundColor = 'gold';
+    }
+}
+
+function getStart(){
+    // returns the starting node or null if none selected
+    return document.querySelector('div[state=start]') || null;
+}
+
+function getEnd(){
+    // returns the ending node or null if none selected
+    return document.querySelector('div[state=end]') || null;
 }
 
 function getCoordinates(node){
@@ -66,6 +78,32 @@ function getPosition(node){
 function getNode(row, col){
     // returns a node at a given row, column
     return document.querySelector(`div[row="${row}"][col="${col}"]`);
+}
+
+function getScores(node, end){
+    score = {}
+    score.g = Number(node.getAttribute('g'));
+    score.h = findDistance(getCoordinates(node), getCoordinates(end));
+    score.f = score.g + score.h;
+    return score;
+}
+
+function openNode(node){
+    // changes the node to open 
+    node.setAttribute('state', 'open');
+    node.style.backgroundColor = 'teal';
+}
+
+function closeNode(node){
+    // changes the node to closed
+    node.setAttribute('state', 'closed');
+    node.style.backgroundColor = 'silver';
+}
+
+function createPath(node){
+    // changes the node to closed
+    node.setAttribute('state', 'path');
+    node.style.backgroundColor = 'purple';
 }
 
 function findDistance(pos1, pos2){
@@ -99,6 +137,24 @@ function findNeighbors(node){
     return neighbors;
 }
 
+function findPath(start, end){
+    steps = 0;
+    openQueue = new PriorityQueue();
+    path = new Set();
+    openSet = new Set();
+
+    openQueue.enqueue(start, 0, steps);
+    openSet.add(start);
+
+    start.setAttribute('g', 10);
+    getScores(start, end);
+
+    while (!openQueue.empty()){
+        currentNode = openQueue.dequeue().value;
+        openSet.delete(currentNode);
+    }
+}
+
 function clearGrid(){
     // removes all child elements from the grid container
     while (container.firstChild){
@@ -110,6 +166,20 @@ function reset(){
     // clears the grid and generates a new grid
     clearGrid();
     createGrid(40);
+}
+
+function run(){
+    start = getStart();
+    end = getEnd();
+    if (!start){
+        window.alert('Error: Please add a starting node.');
+        return;
+    }
+    else if (!end) {
+        window.alert('Error: Please add an ending node.');
+        return;
+    }
+    else findPath(start, end);
 }
 
 function main(){
