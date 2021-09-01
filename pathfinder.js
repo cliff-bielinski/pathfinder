@@ -106,16 +106,31 @@ function closeNode(node){
     node.style.backgroundColor = 'silver';
 }
 
+function assignParent(parent, child){
+    // assigns the node position of the parent node to the child's parent attributes
+    pos = getPosition(parent);
+    child.setAttribute(`parentRow`,`${pos.row}`);
+    child.setAttribute(`parentCol`,`${pos.col}`);
+}
+
+function getParent(child){
+    // returns the parent node of the given child node
+    row = child.getAttribute('parentRow');
+    col = child.getAttribute('parentCol');
+    return getNode(row, col);
+}
+
 function createPath(node){
     // changes the node to part of shortest path
     node.setAttribute('state', 'path');
     node.style.backgroundColor = 'purple';
 }
 
-function drawPath(path, current){
-    while(path.has(current)){
-        current = path.current;
+function drawPath(current){
+    // draws the path from end to start following child to parent nodes
+    while(getParent(current)){
         createPath(current);
+        current = getParent(current);
     }
 }
 
@@ -131,29 +146,36 @@ function findNeighbors(node){
     let neighbors = [];
     let tempNode = null;
 
+    function checkNodeValidity(node){
+        if (node.getAttribute('state') == 'wall' || node.getAttribute('state') == 'closed') {
+            return false;
+        }
+        else return true;
+    }
+
     if (position.row < position.limit - 1){
         tempNode = getNode(position.row + 1, position.col);
-        if (tempNode.getAttribute('state') !== 'wall') neighbors.push(tempNode);
+        if (checkNodeValidity(tempNode)) neighbors.push(tempNode);
     }
     if (position.row > 0){
         tempNode = getNode(position.row - 1, position.col);
-        if (tempNode.getAttribute('state') !== 'wall') neighbors.push(tempNode);
+        if (checkNodeValidity(tempNode)) neighbors.push(tempNode);
     }
     if (position.col < position.limit - 1){
         tempNode = getNode(position.row, position.col + 1);
-        if (tempNode.getAttribute('state') !== 'wall') neighbors.push(tempNode);
+        if (checkNodeValidity(tempNode)) neighbors.push(tempNode);
     }   
     if (position.col > 0){
         tempNode = getNode(position.row, position.col - 1);
-        if (tempNode.getAttribute('state') !== 'wall') neighbors.push(tempNode);
+        if (checkNodeValidity(tempNode)) neighbors.push(tempNode);
     }
     return neighbors;
 }
 
 async function findPath(start, end){
+    // implementation of A* search algorithm
     let steps = 0;
     let openQueue = new PriorityQueue();
-    let path = {};
     let openSet = new Set();
 
     openQueue.enqueue(start, 0, steps);
@@ -161,30 +183,35 @@ async function findPath(start, end){
 
     setScores(0, start, end);
 
-    //while there are remaining possible nodes to explore, continue algorith,
+    // while there are remaining possible nodes to explore, continue algorith,
     while (!openQueue.empty()){
-        await sleep(100);
+        await sleep(100); // slows loop for better visualization
         let currentNode = openQueue.dequeue().value;
         openSet.delete(currentNode);
 
-        //destination reached
+        // destination reached
         if (currentNode == end) {
-            drawPath(path, end);
+            drawPath(end);
             return;
+        }
+        
+        // closes node now that it's been visited
+        if (currentNode != start){
+            closeNode(currentNode);
         }
 
         let currentScores = getScores(currentNode, end);
 
         let neighbors = findNeighbors(currentNode);
 
+        //updates scores for neighbors and places neighbors in priority queue if not already present
         neighbors.forEach(neighbor => {
             let tempG = currentScores.g + 1;
             let neighborScores = getScores(neighbor);
             if (tempG < neighborScores.g){
-                path.neighbor = currentNode;
+                assignParent(currentNode, neighbor);
                 setScores(tempG, neighbor, end);
                 neighborScores = getScores(neighbor);
-                console.log(openQueue)
                 if (!openSet.has(neighbor)){
                     steps++;
                     openQueue.enqueue(neighbor, neighborScores.f, steps);
@@ -194,13 +221,12 @@ async function findPath(start, end){
             }
         });
 
-        if (currentNode != start){
-            closeNode(currentNode);
-        }
+
     }
 }
 
 const sleep = (milliseconds) => {
+    // delay function
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
@@ -218,6 +244,7 @@ function reset(){
 }
 
 function run(){
+    // executes the algorithm when run button pressed
     start = getStart();
     end = getEnd();
     if (!start){
