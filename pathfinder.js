@@ -80,7 +80,8 @@ function getNode(row, col){
     return document.querySelector(`div[row="${row}"][col="${col}"]`);
 }
 
-function getScores(node, end){
+function getScores(node){
+    // returns the f, g, and h scores of a given node
     score = {}
     score.g = Number(node.getAttribute('g'));
     score.h = Number(node.getAttribute('h'));
@@ -89,6 +90,7 @@ function getScores(node, end){
 }
 
 function setScores(g, node, end){
+    // takes the g score, end node and current node and calculates + sets the current node's new f, g and h scores
     node.setAttribute('g', g);
     node.setAttribute('h', findDistance(getCoordinates(node), getCoordinates(end)));
     node.setAttribute('f', Number(node.getAttribute('g')) + Number(node.getAttribute('h')));
