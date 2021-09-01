@@ -74,8 +74,27 @@ function findDistance(pos1, pos2){
 }
 
 function findNeighbors(node){
-    gridLimit = Number(node.getAttribute('grid-limit'));
-    
+    let position = getPosition(node);
+    let neighbors = [];
+    let tempNode = null;
+
+    if (position.row < position.limit - 1){
+        tempNode = getNode(position.row + 1, position.col);
+        if (getState(tempNode) !== 'wall') neighbors.push(tempNode);
+    }
+    if (position.row > 0){
+        tempNode = getNode(position.row - 1, position.col);
+        if (getState(tempNode) !== 'wall') neighbors.push(tempNode);
+    }
+    if (position.col < position.limit - 1){
+        tempNode = getNode(position.row, position.col + 1);
+        if (getState(tempNode) !== 'wall') neighbors.push(tempNode);
+    }   
+    if (position.col > 0){
+        tempNode = getNode(position.row, position.col - 1);
+        if (getState(tempNode) !== 'wall') neighbors.push(tempNode);
+    }
+    return neighbors;
 }
 
 function clearGrid(){
