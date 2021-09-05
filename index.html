@@ -6,15 +6,30 @@
         <title>Pathfinder</title>
     </head>
     <body>
-        <header>
-            Pathfinder
-        </header>
-        <buttons>
-            <button id="run" onclick="run()">Run!</button>
-            <button id="reset" onclick="reset()">Reset</button>
-        </buttons>
-        <div class="container" id="grid"></div>
-        <div class="about"></div>
+        <div class="wrapper">
+            <header>
+                <h1>Pathfinder</h1>
+            </header>
+            <section id="instructions">
+                <h4>Instructions:</h4>
+                Left-click to set start and end nodes.<br>
+                Hold shift and move mouse around grid to create walls.
+            </section>
+            <buttons id="buttons">
+                <button id="run" onclick="run()">Run!</button>
+                <button id="reset" onclick="reset()">Reset</button>
+            </buttons>
+            <div class="container" id="grid"></div>
+            <div class="about">
+                <p>A* Search Algorithm - a modifiction of Dijkstra's Algorithm which aims to find the shortest path
+                    between two distances. It maintains a tree of paths extending out from the starting node and extends
+                    the paths until the end node is reached. Unlike Dijkstra's Algorithm, which solely chooses nodes to explore
+                    based on the next shortest distance from the beginning, A* adds an additional heuristic function which 
+                    estimates the remaining cost to reach the end in addition to the distance from the beginning 
+                    to choose its next node.
+                </p>
+            </div>
+        </div>
         <script src="priority.js"></script>
         <script src="pathfinder.js"></script>
     </body>

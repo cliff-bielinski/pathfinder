@@ -4,15 +4,26 @@ body {
 
 header {
     text-align: center;
+    grid-column: 1/6;
 }
 
 button {
     padding: 5px 15px 5px 15px;
     box-shadow: 2px 2px 5px black;
-    margin: 10px;
+    margin: 60px 20px 10px 10px;
+}
+
+
+
+.wrapper {
+    display: grid;
+    width: 1000px;
+    height: 1000px;
+    grid-template-columns: repeat(5, 1fr);
 }
 
 .container {
+    grid-column: 1/6;
     display: grid;
     width: 800px;
     height: 800px;
@@ -23,4 +34,15 @@ button {
 
 .node {
     border: 0.1px solid rgba(0, 0, 0, 0.1);
+}
+
+.about {
+    grid-column: 1/6;
+    text-align: center;
+    margin: 10px 100px 0px 100px;
+}
+
+#instructions {
+    text-align: center;
+    grid-column: 1/4;
 }

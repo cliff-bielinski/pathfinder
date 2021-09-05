@@ -187,7 +187,7 @@ async function findPath(start, end){
 
     // while there are remaining possible nodes to explore, continue algorith,
     while (!openQueue.empty()){
-        await sleep(100); // slows loop for better visualization
+        await sleep(10); // slows loop for better visualization
         let currentNode = openQueue.dequeue().value;
         openSet.delete(currentNode);
 
@@ -208,7 +208,7 @@ async function findPath(start, end){
 
         //updates scores for neighbors and places neighbors in priority queue if not already present
         neighbors.forEach(neighbor => {
-            let tempG = currentScores.g + 1;
+            let tempG = currentScores.g + 20;
             let neighborScores = getScores(neighbor);
             if (tempG < neighborScores.g){
                 assignParent(currentNode, neighbor);
@@ -222,8 +222,6 @@ async function findPath(start, end){
                 }
             }
         });
-
-
     }
 }
 

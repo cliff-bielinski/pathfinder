@@ -38,4 +38,4 @@ Node Class:
     Examine neighbors
 
  Data Structures:
-    Priority Queue - allows for fast 
+    Priority Queue using a binary heap - allows for faster sorting of nodes in open set by priority (lowest f values)
